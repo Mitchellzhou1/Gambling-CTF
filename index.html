@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Game</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .roulette-table {
+            display: inline-block;
+            margin: 20px;
+        }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid #000; /* Change to border-top */
+            margin: 0 auto;
+        }
+        .roulette-wheel {
+            width: 400px;
+            height: 400px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            position: relative;
+            margin-top: 10px; /* Adjust the margin to move the wheel down */
+            transition: transform 5s ease-in-out;
+            background-image: url('https://pngimg.com/d/roulette_PNG17.png'); /* Set the image URL */
+            background-size: cover; /* Make the image cover the entire wheel */
+        }
+        .bet-input {
+            width: 80px;
+            padding: 5px;
+            margin: 10px;
+        }
+        #spin-button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+        #result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Roulette Game</h1>
+    <div class="roulette-table">
+        <div class="triangle"></div>
+        <div class="roulette-wheel" id="wheel">
+            <!-- Create 36 pockets with alternating red and black colors -->
+            <!-- Red pockets have class "pocket", black pockets have class "pocket black-pocket" -->
+            <!-- You can adjust the pocket layout for a real roulette wheel -->
+            <div class="pocket" style="transform: rotate(0deg);"></div>
+            <div class="pocket black-pocket" style="transform: rotate(10deg);"></div>
+            <!-- Repeat for all pockets... -->
+        </div>
+        <input type="number" class="bet-input" id="bet-amount" placeholder="Bet amount">
+        <button id="spin-button">Spin</button>
+        <p id="result">Result: Waiting for spin...</p>
+    </div>
+
+    <script>
+        // JavaScript for handling the game logic
+        const spinButton = document.getElementById("spin-button");
+        const resultText = document.getElementById("result");
+        const wheel = document.getElementById("wheel");
+
+        spinButton.addEventListener("click", () => {
+            // Simulate a random result (1-36 for a single-zero roulette)
+            const randomNumber = Math.floor(Math.random() * 36) + 1;
+
+            // Disable the spin button during the spin
+            spinButton.disabled = true;
+
+            // Rotate the wheel for a fixed duration (5 seconds)
+            wheel.style.transition = 'transform 5s ease-in-out';
+            wheel.style.transform = 'rotate(720deg)'; // Two full rotations
+
+            // After a delay, show the result and enable the spin button
+            setTimeout(() => {
+                resultText.textContent = `Result: ${randomNumber}`;
+                spinButton.disabled = false;
+
+                // Reset the wheel rotation
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+            }, 5000); // 5 seconds to match the wheel spin duration
+        });
+    </script>
+</body>
+</html>
