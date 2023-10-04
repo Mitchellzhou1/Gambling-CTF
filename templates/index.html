@@ -70,24 +70,26 @@
         const resultText = document.getElementById("result");
         const wheel = document.getElementById("wheel");
 
+        let currentRotation = 0; // Store the current rotation degree
+
         spinButton.addEventListener("click", () => {
-            // Disable the spin button during the spin
+        // Disable the spin button during the spin
             spinButton.disabled = true;
 
-            // Reset the wheel's rotation
-            wheel.style.transition = 'none';
-            wheel.style.transform = 'rotate(0deg)';
-
-            // Make an AJAX request to fetch degrees and number from Flask
-            fetch('/spin')
+       // Make an AJAX request to fetch degrees and number from Flask
+        fetch('/spin')
                 .then(response => response.json())
                 .then(data => {
                     const degrees = data.degrees;
                     const number = data.number;
                     console.log(`Degrees: ${degrees}`);
+
+                    // Calculate the new rotation degree by adding to the current rotation
+                    currentRotation += degrees;
+
                     // Rotate the wheel for a fixed duration (5 seconds)
-                    wheel.style.transition = 'transform 5s ease-in-out';
-                    wheel.style.transform = `rotate(${720 + degrees}deg)`; // Two full rotations
+                wheel.style.transition = 'transform 5s ease-in-out';
+                    wheel.style.transform = `rotate(${currentRotation}deg)`;
 
                     // After a delay, show the result and enable the spin button
                     setTimeout(() => {
@@ -95,7 +97,9 @@
                         spinButton.disabled = false;
                     }, 5000);
                 });
-        });
-    </script>
+    });
+</script>
+
+
 </body>
 </html>

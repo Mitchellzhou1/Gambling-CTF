@@ -26,20 +26,18 @@ def testing(steps, val):
 def spinner():
     global pointer
     steps = random.randrange(0, 38)
-    pointer = steps
+    pointer = (pointer + steps) % 38
     testing(steps, numbers[pointer])
-    return numbers[pointer]
+    return numbers[pointer], steps
 
 
 @app.route('/spin')
 def spin():
-    global pointer
-    number, color = spinner()
-    degree = degrees * pointer
+    (number, color), steps = spinner()
+    degree = degrees * steps
     print("number = ", number)
     print("degrees = ", degrees * pointer)
-    pointer = 0
-    return jsonify(degrees=degree, number=number)
+    return jsonify(degrees=720 + degree, number=number)
 
 @app.route('/')
 def index():
