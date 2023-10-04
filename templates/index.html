@@ -66,14 +66,11 @@
     </div>
 
     <script>
-        // JavaScript for handling the game logic
         const spinButton = document.getElementById("spin-button");
         const resultText = document.getElementById("result");
         const wheel = document.getElementById("wheel");
-        degrees = {{degrees}};  // Get the degrees value from Flask
 
         spinButton.addEventListener("click", () => {
-            fetch('/')
             // Disable the spin button during the spin
             spinButton.disabled = true;
 
@@ -81,17 +78,23 @@
             wheel.style.transition = 'none';
             wheel.style.transform = 'rotate(0deg)';
 
-            // Rotate the wheel for a fixed duration (5 seconds)
-            setTimeout(() => {
-                wheel.style.transition = 'transform 5s ease-in-out';
-                wheel.style.transform = `rotate(${720 + degrees}deg)`; // Two full rotations
-            }, 100);
+            // Make an AJAX request to fetch degrees and number from Flask
+            fetch('/spin')
+                .then(response => response.json())
+                .then(data => {
+                    const degrees = data.degrees;
+                    const number = data.number;
+                    console.log(`Degrees: ${degrees}`);
+                    // Rotate the wheel for a fixed duration (5 seconds)
+                    wheel.style.transition = 'transform 5s ease-in-out';
+                    wheel.style.transform = `rotate(${720 + degrees}deg)`; // Two full rotations
 
-            // After a delay, show the result and enable the spin button
-            setTimeout(() => {
-                resultText.textContent = `Result: {{number}}`; // Use the Flask-provided number
-                spinButton.disabled = false;
-            }, 5000);
+                    // After a delay, show the result and enable the spin button
+                    setTimeout(() => {
+                        resultText.textContent = `Result: ${number}`;
+                        spinButton.disabled = false;
+                    }, 5000);
+                });
         });
     </script>
 </body>

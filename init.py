@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, url_for, redirect, make_response
+from flask import Flask, render_template, request, session, url_for, redirect, make_response, jsonify
 import pymysql.cursors
 from app import app, get_conn
 import string, random
@@ -31,14 +31,19 @@ def spinner():
     return numbers[pointer]
 
 
-@app.route('/')
-def index():
+@app.route('/spin')
+def spin():
     global pointer
     number, color = spinner()
+    degree = degrees * pointer
     print("number = ", number)
     print("degrees = ", degrees * pointer)
-    res = render_template('index.html', number=number, degrees=degrees * pointer)
     pointer = 0
+    return jsonify(degrees=degree, number=number)
+
+@app.route('/')
+def index():
+    res = render_template('index.html')
     return res
 
 
