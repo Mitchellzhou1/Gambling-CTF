@@ -17,26 +17,28 @@ degrees = 360 / len(numbers)
 pointer = 0
 
 
-# def testing(steps, pointer, val):
-#     print("steps=", steps)
-#     print("pointer=", pointer)
-#     print("val=", val)
+def testing(steps, val):
+    print("steps=", steps)
+    print("pointer=", pointer)
+    print("val=", val)
 
 
 def spinner():
     global pointer
     steps = random.randrange(0, 38)
-    pointer += steps
-    number, color = numbers[pointer]
-    return number, color
+    pointer = steps
+    testing(steps, numbers[pointer])
+    return numbers[pointer]
 
 
 @app.route('/')
 def index():
     global pointer
     number, color = spinner()
+    print("number = ", number)
+    print("degrees = ", degrees * pointer)
     res = render_template('index.html', number=number, degrees=degrees * pointer)
-    pointer = (pointer + int(number)) % 38
+    pointer = 0
     return res
 
 

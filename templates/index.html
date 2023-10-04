@@ -70,9 +70,10 @@
         const spinButton = document.getElementById("spin-button");
         const resultText = document.getElementById("result");
         const wheel = document.getElementById("wheel");
-        const degrees = {{degrees}};  // Get the degrees value from Flask
+        degrees = {{degrees}};  // Get the degrees value from Flask
 
         spinButton.addEventListener("click", () => {
+            fetch('/')
             // Disable the spin button during the spin
             spinButton.disabled = true;
 
