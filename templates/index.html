@@ -70,27 +70,27 @@
         const spinButton = document.getElementById("spin-button");
         const resultText = document.getElementById("result");
         const wheel = document.getElementById("wheel");
+        const degrees = {{degrees}};  // Get the degrees value from Flask
 
         spinButton.addEventListener("click", () => {
-            // Simulate a random result (1-36 for a single-zero roulette)
-            const randomNumber = Math.floor(Math.random() * 36) + 1;
-
             // Disable the spin button during the spin
             spinButton.disabled = true;
 
+            // Reset the wheel's rotation
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+
             // Rotate the wheel for a fixed duration (5 seconds)
-            wheel.style.transition = 'transform 5s ease-in-out';
-            wheel.style.transform = 'rotate(720deg)'; // Two full rotations
+            setTimeout(() => {
+                wheel.style.transition = 'transform 5s ease-in-out';
+                wheel.style.transform = `rotate(${720 + degrees}deg)`; // Two full rotations
+            }, 100);
 
             // After a delay, show the result and enable the spin button
             setTimeout(() => {
-                resultText.textContent = `Result: ${randomNumber}`;
+                resultText.textContent = `Result: {{number}}`; // Use the Flask-provided number
                 spinButton.disabled = false;
-
-                // Reset the wheel rotation
-                wheel.style.transition = 'none';
-                wheel.style.transform = 'rotate(0deg)';
-            }, 5000); // 5 seconds to match the wheel spin duration
+            }, 5000);
         });
     </script>
 </body>

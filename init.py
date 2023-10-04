@@ -3,24 +3,44 @@ import pymysql.cursors
 from app import app, get_conn
 import string, random
 
+numbers = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), ('24', 'black'), ('3', 'red'),
+           ('15', 'black'), ('34', 'red'), ('22', 'black'), ('5', 'red'),
+           ('17', 'black'), ('32', 'red'), ('20', 'black'), ('7', 'red'), ('11', 'black'), ('30', 'red'),
+           ('26', 'black'), ('9', 'red'), ('28', 'black'),
+           ('0', 'green'), ('2', 'black'), ('14', 'red'), ('35', 'black'), ('23', 'red'), ('4', 'black'), ('16', 'red'),
+           ('33', 'black'), ('21', 'red'),
+           ('6', 'black'), ('18', 'red'), ('31', 'black'), ('19', 'red'), ('8', 'black'), ('12', 'red'),
+           ('29', 'black'), ('35', 'red'), ('10', 'black'),
+           ('27', 'red')]
+
+degrees = 360 / len(numbers)
+pointer = 0
+
+
+# def testing(steps, pointer, val):
+#     print("steps=", steps)
+#     print("pointer=", pointer)
+#     print("val=", val)
+
+
+def spinner():
+    global pointer
+    steps = random.randrange(0, 38)
+    pointer += steps
+    number, color = numbers[pointer]
+    return number, color
+
+
 @app.route('/')
 def index():
-    numbers = [('00', 'green'), ('27', 'red'), ('10', 'black'), ('35', 'red'), ('29', 'black'), ('12', 'red'), ('8', 'black'), ('19', 'red'),
-               ('31', 'black'), ('18', 'red'), ('6', 'black'), ('21', 'red'), ('33', 'black'), ('16', 'red'), ('4', 'black'), ('23', 'red'),
-               ('35', 'black'), ('14', 'red'), ('2', 'black'), ('0', 'green'), ('28', 'black'), ('9', 'red'), ('26', 'black'), ('30', 'red'),
-               ('11', 'black'), ('7', 'red'), ('20', 'black'), ('32', 'red'), ('17', 'black'), ('5', 'red'), ('22', 'black'), ('34', 'red'),
-               ('15', 'black'), ('3', 'red'), ('24', 'black'), ('36', 'red'), ('13', 'black'), ('1', 'red')]
-
-    res = make_response(render_template('index.html'))
-    turn = len(numbers) / 360
-    pointer = 0
-
-    ans = random.randrange(0, 39)
-    
+    global pointer
+    number, color = spinner()
+    res = render_template('index.html', number=number, degrees=degrees * pointer)
+    pointer = (pointer + int(number)) % 38
     return res
 
 
-app.secret_key = 'Q3I3Pm1lc3NpQ3I3Pm1lc3NpQ3I3Pm1lc3Np123hehe'
+app.secret_key = 'hehe'
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5800, debug=False)
