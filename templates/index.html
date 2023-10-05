@@ -53,61 +53,49 @@
     <div class="roulette-table">
         <div class="triangle"></div>
         <div class="roulette-wheel" id="wheel">
-            <!-- Create 36 pockets with alternating red and black colors -->
-            <!-- Red pockets have class "pocket", black pockets have class "pocket black-pocket" -->
-            <!-- You can adjust the pocket layout for a real roulette wheel -->
             <div class="pocket" style="transform: rotate(0deg);"></div>
             <div class="pocket black-pocket" style="transform: rotate(10deg);"></div>
-            <!-- Repeat for all pockets... -->
         </div>
         <input type="number" class="bet-input" id="bet-amount" placeholder="Bet amount">
         <button id="spin-button">Spin</button>
         <p id="result">Result: Click to Play!</p>
     </div>
 
-<script>
-    const spinButton = document.getElementById("spin-button");
-    const resultText = document.getElementById("result");
-    const wheel = document.getElementById("wheel");
+    <script>
+        const spinButton = document.getElementById("spin-button");
+        const resultText = document.getElementById("result");
+        const wheel = document.getElementById("wheel");
 
-    let currentRotation = 0; // Store the current rotation degree
+        let currentRotation = 0; // Store the current rotation degree
 
-    // Function to spin the wheel
-    function spinWheel() {
+        spinButton.addEventListener("click", () => {
         // Disable the spin button during the spin
-        spinButton.disabled = true;
+            spinButton.disabled = true;
 
-        // Make an AJAX request to fetch degrees and number from Flask
+       // Make an AJAX request to fetch degrees and number from Flask
         fetch('/spin')
-            .then(response => response.json())
-            .then(data => {
-                const degrees = data.degrees;
-                const number = data.number;
-                console.log(`Degrees: ${degrees}`);
+                .then(response => response.json())
+                .then(data => {
+                    const degrees = data.degrees;
+                    const number = data.number;
+                    console.log(`Degrees: ${degrees}`);
 
-                // Calculate the new rotation degree by adding to the current rotation
-                currentRotation += degrees;
+                    // Calculate the new rotation degree by adding to the current rotation
+                    currentRotation += degrees;
 
-                // Rotate the wheel for a fixed duration (5 seconds)
+                    // Rotate the wheel for a fixed duration (5 seconds)
                 wheel.style.transition = 'transform 5s ease-in-out';
-                wheel.style.transform = `rotate(${currentRotation}deg)`;
+                    wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-                // After a delay, show the result and enable the spin button
-                setTimeout(() => {
-                    resultText.textContent = `Result: ${number}`;
-                    spinButton.disabled = false;
-                }, 5000);
-            });
-    }
-
-    // Initial spin when the page loads
-    spinWheel();
-
-    // Automatically spin the wheel every 15 seconds
-    setInterval(spinWheel, 15000); // 15 seconds = 15000 milliseconds
+                    // After a delay, show the result and enable the spin button
+                    setTimeout(() => {
+                        resultText.textContent = `Result: ${number}`;
+                        spinButton.disabled = false;
+                    }, 5000);
+                });
+    });
 </script>
 
-<p id="countdown">Next spin in 15 seconds</p>
 
 </body>
 </html>

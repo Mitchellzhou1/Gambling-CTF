@@ -15,6 +15,7 @@ numbers = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), ('24',
 
 degrees = 360 / len(numbers)
 pointer = 0
+MONEY = 2000
 
 
 def testing(steps, val):
@@ -31,13 +32,21 @@ def spinner():
     return numbers[pointer], steps
 
 
+@app.route('/userInput')
+def userInput(color=''):
+    print(color)
+    return color
+
+
+
 @app.route('/spin')
-def spin():
+def spin(user_color=''):
     (number, color), steps = spinner()
     degree = degrees * steps
     print("number = ", number)
     print("degrees = ", degrees * pointer)
     return jsonify(degrees=720 + degree, number=number, color=color)
+
 
 @app.route('/')
 def index():
