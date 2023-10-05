@@ -38,10 +38,6 @@
             padding: 5px;
             margin: 10px;
         }
-        #spin-button {
-            padding: 10px 20px;
-            font-size: 18px;
-        }
         #result {
             font-size: 24px;
             margin-top: 20px;
@@ -56,14 +52,21 @@
             <div class="pocket" style="transform: rotate(0deg);"></div>
             <div class="pocket black-pocket" style="transform: rotate(10deg);"></div>
         </div>
-        <input type="number" class="bet-input" id="bet-amount" placeholder="Bet amount">
-        <button id="spin-button">Spin</button>
         <p id="result">Result: Click to Play!</p>
+        <form id="bet-form">
+            <input type="radio" id="red" name="bet" value="Red"> Red
+            <input type="radio" id="black" name="bet" value="Black"> Black
+            <input type="radio" id="green" name="bet" value="Green"> Green
+        </form>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
     </div>
 
 <script>
     const resultText = document.getElementById("result");
     const wheel = document.getElementById("wheel");
+    const betForm = document.getElementById("bet-form");
 
     let currentRotation = 0; // Store the current rotation degree
 
@@ -71,6 +74,9 @@
     function spinWheel() {
         // Disable user interaction while spinning
         wheel.style.pointerEvents = 'none';
+
+        // Get the selected bet option
+        const selectedBet = betForm.querySelector('input[name="bet"]:checked');
 
         // Make an AJAX request to fetch degrees and number from Flask
         fetch('/spin')
@@ -101,8 +107,5 @@
     // Initial spin to start the automatic spinning
     spinWheel();
 </script>
-
-
-
 </body>
 </html>
