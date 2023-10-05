@@ -15,7 +15,8 @@ numbers = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), ('24',
 
 degrees = 360 / len(numbers)
 pointer = 0
-MONEY = 2000
+user_stack = []
+Token = 2000
 
 
 def testing(steps, val):
@@ -32,15 +33,20 @@ def spinner():
     return numbers[pointer], steps
 
 
-@app.route('/userInput')
-def userInput(color=''):
-    print(color)
+def add_points():
+    ...
+
+
+@app.route('/getColor', methods=['POST'])
+def getColor():
+    global user_stack
+    color = request.json.get('user_color', '')
+    user_stack.append(color)
     return color
 
 
-
-@app.route('/spin')
-def spin(user_color=''):
+@app.route('/spin', methods=['POST'])
+def spin():
     (number, color), steps = spinner()
     degree = degrees * steps
     print("number = ", number)
