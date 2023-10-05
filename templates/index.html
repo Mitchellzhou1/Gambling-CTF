@@ -61,40 +61,47 @@
         <p id="result">Result: Click to Play!</p>
     </div>
 
-    <script>
-        const spinButton = document.getElementById("spin-button");
-        const resultText = document.getElementById("result");
-        const wheel = document.getElementById("wheel");
+<script>
+    const resultText = document.getElementById("result");
+    const wheel = document.getElementById("wheel");
 
-        let currentRotation = 0; // Store the current rotation degree
+    let currentRotation = 0; // Store the current rotation degree
 
-        spinButton.addEventListener("click", () => {
-        // Disable the spin button during the spin
-            spinButton.disabled = true;
+    // Function to spin the wheel
+    function spinWheel() {
+        // Disable user interaction while spinning
+        wheel.style.pointerEvents = 'none';
 
-       // Make an AJAX request to fetch degrees and number from Flask
+        // Make an AJAX request to fetch degrees and number from Flask
         fetch('/spin')
-                .then(response => response.json())
-                .then(data => {
-                    const degrees = data.degrees;
-                    const number = data.number;
-                    console.log(`Degrees: ${degrees}`);
+            .then(response => response.json())
+            .then(data => {
+                const degrees = data.degrees;
+                const number = data.number;
+                console.log(`Degrees: ${degrees}`);
 
-                    // Calculate the new rotation degree by adding to the current rotation
-                    currentRotation += degrees;
+                // Calculate the new rotation degree by adding to the current rotation
+                currentRotation += degrees;
 
-                    // Rotate the wheel for a fixed duration (5 seconds)
+                // Rotate the wheel for a fixed duration (5 seconds)
                 wheel.style.transition = 'transform 5s ease-in-out';
-                    wheel.style.transform = `rotate(${currentRotation}deg)`;
+                wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-                    // After a delay, show the result and enable the spin button
-                    setTimeout(() => {
-                        resultText.textContent = `Result: ${number}`;
-                        spinButton.disabled = false;
-                    }, 5000);
-                });
-    });
+                // After a delay, show the result and re-enable user interaction
+                setTimeout(() => {
+                    resultText.textContent = `Result: ${number}`;
+                    wheel.style.pointerEvents = 'auto';
+                }, 5000);
+            });
+    }
+
+    // Automatically spin the wheel every 15 seconds
+    setInterval(spinWheel, 15000);
+
+    // Initial spin to start the automatic spinning
+    spinWheel();
 </script>
+
 
 
 </body>
