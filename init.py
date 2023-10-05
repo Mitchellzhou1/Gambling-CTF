@@ -37,7 +37,7 @@ def spin():
     degree = degrees * steps
     print("number = ", number)
     print("degrees = ", degrees * pointer)
-    return jsonify(degrees=720 + degree, number=number)
+    return jsonify(degrees=720 + degree, number=number, color=color)
 
 @app.route('/')
 def index():
