@@ -52,39 +52,34 @@
             <div class="pocket" style="transform: rotate(0deg);"></div>
             <div class="pocket black-pocket" style="transform: rotate(10deg);"></div>
         </div>
+        <p id="result">Result: Click to Play!</p>
         <form id="bet-form">
             <input type="radio" id="red" name="bet" value="Red"> Red
             <input type="radio" id="black" name="bet" value="Black"> Black
             <input type="radio" id="green" name="bet" value="Green"> Green
-            <input type="submit" value="Submit Bet">
         </form>
-        <p id="result">Result: Click to Play!</p>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
     </div>
 
-    <script>
-        const resultText = document.getElementById("result");
-        const wheel = document.getElementById("wheel");
-        const betForm = document.getElementById("bet-form");
+<script>
+    const resultText = document.getElementById("result");
+    const wheel = document.getElementById("wheel");
+    const betForm = document.getElementById("bet-form");
 
-        let currentRotation = 0; // Store the current rotation degree
+    let currentRotation = 0; // Store the current rotation degree
 
-        // Function to spin the wheel
-        function spinWheel() {
-            // Disable user interaction while spinning
-            wheel.style.pointerEvents = 'none';
+    // Function to spin the wheel
+    function spinWheel() {
+        // Disable user interaction while spinning
+        wheel.style.pointerEvents = 'none';
 
-            // Get the selected bet option
-            const selectedBet = betForm.querySelector('input[name="bet"]:checked');
-            console.log(selectedBet ? selectedBet.value : '');
+        // Get the selected bet option
+        const selectedBet = betForm.querySelector('input[name="bet"]:checked');
 
-            // Make an AJAX request to send the selected bet and fetch degrees and number from Flask
-            fetch('/getColor', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user_color: selectedBet ? selectedBet.value : 'n' }) // Ensure a default value
-            })
+        // Make an AJAX request to fetch degrees and number from Flask
+        fetch('/spin')
             .then(response => response.json())
             .then(data => {
                 const degrees = data.degrees;
@@ -104,14 +99,13 @@
                     wheel.style.pointerEvents = 'auto';
                 }, 5000);
             });
-        }
+    }
 
-        // Automatically spin the wheel every 15 seconds
-        setInterval(spinWheel, 15000);
+    // Automatically spin the wheel every 15 seconds
+    setInterval(spinWheel, 15000);
 
-        // Initial spin to start the automatic spinning
-        spinWheel();
-    </script>
-
+    // Initial spin to start the automatic spinning
+    spinWheel();
+</script>
 </body>
 </html>
