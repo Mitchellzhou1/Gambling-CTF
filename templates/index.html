@@ -57,10 +57,8 @@
             <input type="radio" id="red" name="bet" value="Red"> Red
             <input type="radio" id="black" name="bet" value="Black"> Black
             <input type="radio" id="green" name="bet" value="Green"> Green
-        </form>
-        <div>
             <input type="submit" value="Submit">
-        </div>
+        </form>
     </div>
 
 <script>
@@ -107,5 +105,33 @@
     // Initial spin to start the automatic spinning
     spinWheel();
 </script>
+
+    <script>betForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Get the selected bet option
+    const selectedBet = betForm.querySelector('input[name="bet"]:checked');
+
+    // Check if a bet option is selected
+    if (selectedBet) {
+        // Construct the URL with the selected bet as a query parameter
+        const url = `/userInput`;
+
+        // Make a GET request to the constructed URL
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    } else {
+        console.error("No bet option selected.");
+    }
+});</script>
+
+
+<p>Wheel spins every 15 seconds</p>
 </body>
 </html>

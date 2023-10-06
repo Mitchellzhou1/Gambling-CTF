@@ -33,9 +33,17 @@ def spinner():
 
 
 @app.route('/userInput')
-def userInput(color=''):
-    print(color)
-    return color
+def userInput():
+    print("THIS RAN")
+    # Get the selected color from the JSON request data
+    data = request.get_json()
+    selected_color = data.get('color')
+
+    # Here, you can use the selected_color as needed
+    print(data)
+
+    # Return the selected color as a JSON response
+    return jsonify(color=selected_color)
 
 
 
