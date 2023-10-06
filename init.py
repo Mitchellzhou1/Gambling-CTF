@@ -15,7 +15,8 @@ numbers = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), ('24',
 
 degrees = 360 / len(numbers)
 pointer = 0
-MONEY = 2000
+tokens = 2000
+stack = []
 
 
 def testing(steps, val):
@@ -28,37 +29,46 @@ def spinner():
     global pointer
     steps = random.randrange(0, 38)
     pointer = (pointer + steps) % 38
-    testing(steps, numbers[pointer])
+    #testing(steps, numbers[pointer])
     return numbers[pointer], steps
 
 
-@app.route('/userInput')
+def point_system(color):
+    global stack, tokens
+    if stack:
+        if stack[0] == color:
+            if color == 'red':
+                tokens *= 2
+            elif color == 'black':
+                tokens *= 2
+            else:
+                tokens *= 10
+        else:
+            tokens //= 5
+        stack.pop(0)
+    print(tokens)
+
+
+@app.route('/userInput', methods=['POST'])
 def userInput():
-    print("THIS RAN")
-    # Get the selected color from the JSON request data
+    global stack
     data = request.get_json()
-    selected_color = data.get('color')
-
-    # Here, you can use the selected_color as needed
-    print(data)
-
-    # Return the selected color as a JSON response
-    return jsonify(color=selected_color)
-
-
+    stack.append(data['user_color'])
+    return jsonify(color=data)
 
 @app.route('/spin')
-def spin(user_color=''):
+def spin():
+    global tokens
     (number, color), steps = spinner()
+    print(number, color)
     degree = degrees * steps
-    print("number = ", number)
-    print("degrees = ", degrees * pointer)
-    return jsonify(degrees=720 + degree, number=number, color=color)
+    point_system(color)
+    return jsonify(degrees=720 + degree, number=number, color=color, tokens=tokens)
 
 
 @app.route('/')
 def index():
-    res = render_template('index.html')
+    res = render_template('index.html', tokens=tokens)
     return res
 
 

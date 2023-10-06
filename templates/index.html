@@ -29,6 +29,7 @@
             border-radius: 50%;
             position: relative;
             margin-top: 10px; /* Adjust the margin to move the wheel down */
+            margin-bottom: 15px;
             transition: transform 5s ease-in-out;
             background-image: url('https://pngimg.com/d/roulette_PNG17.png'); /* Set the image URL */
             background-size: cover; /* Make the image cover the entire wheel */
@@ -42,6 +43,11 @@
             font-size: 24px;
             margin-top: 20px;
         }
+        #token-balance {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -52,17 +58,20 @@
             <div class="pocket" style="transform: rotate(0deg);"></div>
             <div class="pocket black-pocket" style="transform: rotate(10deg);"></div>
         </div>
+        <div id="token-balance"><b>Tokens:</b> 2000</div>
+
         <p id="result">Result: Click to Play!</p>
         <form id="bet-form">
-            <input type="radio" id="red" name="bet" value="Red"> Red
-            <input type="radio" id="black" name="bet" value="Black"> Black
-            <input type="radio" id="green" name="bet" value="Green"> Green
+            <input type="radio" id="red" name="bet" value="red"> Red
+            <input type="radio" id="black" name="bet" value="black"> Black
+            <input type="radio" id="green" name="bet" value="green"> Green
             <input type="submit" value="Submit">
         </form>
     </div>
 
 <script>
     const resultText = document.getElementById("result");
+    const tokenBalanceElement = document.getElementById("token-balance");
     const wheel = document.getElementById("wheel");
     const betForm = document.getElementById("bet-form");
 
@@ -82,7 +91,7 @@
             .then(data => {
                 const degrees = data.degrees;
                 const number = data.number;
-                console.log(`Degrees: ${degrees}`);
+                const tokens = data.tokens;
 
                 // Calculate the new rotation degree by adding to the current rotation
                 currentRotation += degrees;
@@ -94,6 +103,7 @@
                 // After a delay, show the result and re-enable user interaction
                 setTimeout(() => {
                     resultText.textContent = `Result: ${number}`;
+                    tokenBalanceElement.textContent = `Tokens: ${tokens}`;
                     wheel.style.pointerEvents = 'auto';
                 }, 5000);
             });
@@ -104,9 +114,11 @@
 
     // Initial spin to start the automatic spinning
     spinWheel();
+    updateTokenBalance();
 </script>
 
-    <script>betForm.addEventListener("submit", function (event) {
+<script>
+    betForm.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
 
     // Get the selected bet option
@@ -114,22 +126,34 @@
 
     // Check if a bet option is selected
     if (selectedBet) {
-        // Construct the URL with the selected bet as a query parameter
+        // Construct the URL for the POST request
         const url = `/userInput`;
 
-        // Make a GET request to the constructed URL
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // Create a JSON object with the selected bet
+        const postData = {
+            user_color: selectedBet.value
+        };
+
+        // Make a POST request to the constructed URL
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
     } else {
         console.error("No bet option selected.");
     }
-});</script>
+    });
+</script>
 
 
 <p>Wheel spins every 15 seconds</p>
