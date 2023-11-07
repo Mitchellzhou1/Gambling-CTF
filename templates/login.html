@@ -60,23 +60,32 @@
         .login-container label {
             margin-bottom: 5px;
         }
+        #error-message {
+        color: red; /* Text color */
+        background-color: #ffdddd; /* Light red background */
+        border: 1px solid red; /* Red border */
+        padding: 10px; /* Some padding */
+        margin-top: 10px; /* Space above the box */
+        border-radius: 5px; /* Rounded corners */
+        display: none; /* Hide by default */
+        text-align: center; /* Center the text */
+        }
     </style>
 </head>
 
 <body>
     <div class="login-container">
-        <h2>LOGIN</h2>
+        <h2>SIGN IN</h2>
         <form id="loginForm" method="post">
             <label for="usr">Username</label>
             <input type="text" id="usr" name="username" required>
             <label for="pwd">Password</label>
             <input type="password" id="pwd" name="password" required>
-            <input type="submit" value="submit">
+            <input type="submit" value="Login">
+            <div id="error-message" style="color: red;"></div>
         </form>
     </div>
-    {{error}}
     
-
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
@@ -100,14 +109,25 @@
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 } else if (data.error) {
-                    // Handle the error message as you'd like, maybe display it to the user
-                    console.error(data.error);
+                    // Display the error message and error box
+                    document.getElementById('error-message').textContent = data.error;
+                    document.getElementById('error-message').style.display = 'block'; 
+                    
+                    if (data.success === false) {
+                        // Clear the username and password fields
+                        document.getElementById('usr').value = '';
+                        document.getElementById('pwd').value = '';
+                    } 
+                    
+                } else {
+                    // Hide the error box if no error
+                    document.getElementById('error-message').style.display = 'none'; 
                 }
             });
         });
     </script>
+    
 </body>
-
 </html>
 
 

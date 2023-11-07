@@ -66,20 +66,14 @@ def spin():
     point_system(color)
     return jsonify(degrees=720 + degree, number=number, color=color, tokens=tokens)
 
-"""data = {
-    "key": None,
-    "action": None,
-    "args": None
-}"""
-
 @app.route('/')
 def index():
     if 'logged_in' in session and session['logged_in']:
-        return render_template('game.html', tokens=tokens)
+        return render_template('index.html', tokens=tokens)
     else: return redirect(url_for('login'))
     
 
-app.secret_key = "he1231sajiod"
+app.secret_key = "cHSDUsr0MmkUAD0mOLnSFIg0HnOLqK3"
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 5801, debug=False)

@@ -16,12 +16,10 @@ def login():
             username = request.json.get('usr')
             password = request.json.get('pwd')
             if authenticate(username, password):
-                print("THIS RAN")
                 session['logged_in'] = True 
-                return render_template('login.html')
+                return jsonify({"success":True, "redirect": url_for('index')})
             else:
-                return render_template('login.html', error="Incorrect username/password")
-
+                return jsonify({"error": "Incorrect username/password", "success":False})
 
 def authenticate(username, password):
     # Auth with DB
