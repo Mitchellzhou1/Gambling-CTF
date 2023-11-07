@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <style>
-            .error {
+        .error {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -96,9 +96,7 @@
 
             fetch('/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     usr: document.getElementById("usr").value,
                     pwd: document.getElementById("pwd").value
@@ -126,7 +124,7 @@
             });
         });
     </script>
-    
+
 </body>
 </html>
 

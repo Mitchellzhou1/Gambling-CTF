@@ -17,6 +17,7 @@ def login():
             password = request.json.get('pwd')
             if authenticate(username, password):
                 session['logged_in'] = True 
+                session['user'] = username  
                 return jsonify({"success":True, "redirect": url_for('index')})
             else:
                 return jsonify({"error": "Incorrect username/password", "success":False})
@@ -28,6 +29,6 @@ def authenticate(username, password):
 
 @app.route('/logout', methods = ["POST"])
 def logout():
-    message = "View Details"
     session['email'] = ''
-    return
+    session['logged_in'] = False 
+    return render_template('login.html')
