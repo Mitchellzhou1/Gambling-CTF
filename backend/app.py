@@ -9,8 +9,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['roulette']
 users_collection = db['users']
 
-
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register_user():
     data = request.get_json()
 
@@ -39,7 +38,7 @@ def register_user():
     return jsonify({'message': 'User added successfully'}), 201
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
 
