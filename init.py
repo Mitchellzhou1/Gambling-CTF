@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect, m
 import pymysql.cursors
 from app import app, get_conn
 import string, random
+import login 
 
 numbers = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), ('24', 'black'), ('3', 'red'),
            ('15', 'black'), ('34', 'red'), ('22', 'black'), ('5', 'red'),
@@ -19,12 +20,10 @@ pointer = 0
 tokens = 2000
 stack = []
 
-
 def testing(steps, val):
     print("steps=", steps)
     print("pointer=", pointer)
     print("val=", val)
-
 
 def spinner():
     global pointer
@@ -50,12 +49,13 @@ def point_system(color):
     print(tokens)
 
 
-@app.route('/userInput', methods=['POST'])
+"""@app.route('/userInput', methods=['POST'])
 def userInput():
     global stack
     data = request.get_json()
     stack.append(data['user_color'])
-    return jsonify(color=data)
+    return jsonify(color=data)"""
+
 
 @app.route('/spin')
 def spin():
@@ -66,53 +66,20 @@ def spin():
     point_system(color)
     return jsonify(degrees=720 + degree, number=number, color=color, tokens=tokens)
 
-data = {
+"""data = {
     "key": None,
     "action": None,
     "args": None
-}
+}"""
 
-"""
-@app.route('/userInput', methods=['POST'])
-def user_input():
-    try:
-        data['key'] = request.json['key']
-        data['action'] = request.json['action']
-        data['args'] = request.json['args']
-        response = data
-    except KeyError:
-        response = "hello"
-    return jsonify(response)
+@app.route('/')
+def index():
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('game.html', tokens=tokens)
+    else: return redirect(url_for('login'))
+    
 
-@app.route('/getMoney', methods=['POST'])
-def get_money():
-    key = request.json.get('key', None)
-    if key is not None:
-        response = {"key": key}
-    else:
-        response = "hello"
-    return jsonify(response)"""
+app.secret_key = "he1231sajiod"
 
-@app.route('/login', methods=['GET','POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-    key = request.json.get('key', None)
-    if key is not None:
-        response = {"key": key}
-        if key
-    # return jsonify(response)
-        return jsonify({"redirect": url_for('game')})
-
-"""@app.route('/getHistory', methods=['GET'])
-def get_history():
-    # This route takes no parameters, so no need to check for JSON input
-    return jsonify("hello")"""
-
-
-@app.route('/game')
-def game():
-    res = render_template('index.html', tokens=tokens)
-    return res
-
-app.secret_key = "hehe"
+if __name__ == '__main__':
+    app.run('0.0.0.0', 5801, debug=False)
