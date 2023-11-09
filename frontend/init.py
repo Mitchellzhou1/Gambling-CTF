@@ -14,12 +14,6 @@ pointer = 0
 tokens = 2000
 userColor = ""
 
-"""def testing(steps, val):
-    print("steps=", steps)
-    print("pointer=", pointer)
-    print("val=", val)
-
-"""
 def spinner():
     num = str(seed())
     if num == "37": num = "00"
@@ -27,8 +21,7 @@ def spinner():
     for val in rouletteVals:
         if val[0] == num:
             color = val[-1]
-
-    print(f"NUM: {num}")
+            break
     return color, num
 
 def point_system(color):
@@ -70,7 +63,6 @@ def spin():
     global tokens
     color, num = spinner()
     point_system(color)
-
     return jsonify(number=str(num), color=color, tokens=tokens)
 
 @app.route('/')

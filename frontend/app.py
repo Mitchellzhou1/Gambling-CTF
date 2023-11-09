@@ -5,7 +5,7 @@ import pymongo
 
 app = Flask(__name__)
 
-# Configure MongoDB
+# Configure MongoDB 
 def get_conn():
     # return pymongo.connect(
         # host="127.0.0.1",

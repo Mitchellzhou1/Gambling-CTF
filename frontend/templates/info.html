@@ -49,7 +49,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Roulette Bins</h1>
+        <h1>Roulette Info</h1>
+        <p>This paragraph of text is placed before the table. It can contain any information or description that you want to include about the data presented below.</p>
         <table class="data-table">
             <thead>
                 <tr>
@@ -71,5 +72,28 @@
             </tbody>
         </table>
     </div>
+    <script>
+        // Function to fetch the latest seed and update the table
+        function fetchLatestSeedAndUpdateTable() {
+            fetch('http://localhost:5000/api/get-latest-seed')
+                .then(response => response.json())
+                .then(seedData => {
+                    // Assuming seedData is an object with hashed_seed and number properties
+                    const tableBody = document.getElementById('data-body');
+                    const timeNow = new Date().toLocaleString();
+
+                    // Insert the new data into the table
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `<td>${seedData.hashed_seed}</td><td>${timeNow}</td>`;
+                    tableBody.appendChild(newRow);
+                })
+                .catch(error => {
+                    console.error('Error fetching latest seed:', error);
+                });
+        }
+        // Call the function to fetch and update on page load
+        window.onload = fetchLatestSeedAndUpdateTable;
+    </script>
+
 </body>
 </html>

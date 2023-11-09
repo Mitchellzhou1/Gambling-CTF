@@ -5,9 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 # Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['roulette']
-users_collection = db['users']
+CLIENT = MongoClient('mongodb://localhost:27017/')
+DB = CLIENT['roulette']
+USER_COLLECTION = DB['users']
+SEEDS_COLLECTION = DB['seeds']
+
 
 # Register route
 @app.route('/api/register', methods=['POST'])
@@ -19,7 +21,7 @@ def register_user():
         return jsonify({'error': 'Missing required fields'}), 400
 
     # Check if the username already exists
-    existing_user = users_collection.find_one({'username': data['username']})
+    existing_user = USER_COLLECTION.find_one({'username': data['username']})
     if existing_user:
         return jsonify({'error': 'Username already exists'}), 400
 
@@ -34,7 +36,7 @@ def register_user():
     }
 
     # Insert the new user into the collection
-    users_collection.insert_one(new_user)
+    USER_COLLECTION.insert_one(new_user)
 
     return jsonify({'message': 'User added successfully'}), 201
 
@@ -49,7 +51,7 @@ def login():
         return jsonify({'error': 'Username and password are required'}), 400
 
     # Find the user in the database
-    user = users_collection.find_one({'username': data['username']})
+    user = USER_COLLECTION.find_one({'username': data['username']})
     if user and check_password_hash(user['password'], data['password']):
         return jsonify({'message': 'Login successful'}), 200
     else:
@@ -97,4 +99,3 @@ def get_seeds():
 
 def run_flask():
     app.run(debug=False)
-
