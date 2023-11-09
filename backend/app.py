@@ -5,12 +5,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 # Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['roulette']
-users_collection = db['users']
+CLIENT = MongoClient('mongodb://localhost:27017/')
+DB = CLIENT['roulette']
+USER_COLLECTION = DB['users']
+SEEDS_COLLECTION = DB['seeds']
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register_user():
     data = request.get_json()
 
@@ -19,7 +20,7 @@ def register_user():
         return jsonify({'error': 'Missing required fields'}), 400
 
     # Check if the username already exists
-    existing_user = users_collection.find_one({'username': data['username']})
+    existing_user = USER_COLLECTION.find_one({'username': data['username']})
     if existing_user:
         return jsonify({'error': 'Username already exists'}), 400
 
@@ -34,12 +35,12 @@ def register_user():
     }
 
     # Insert the new user into the collection
-    users_collection.insert_one(new_user)
+    USER_COLLECTION.insert_one(new_user)
 
     return jsonify({'message': 'User added successfully'}), 201
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
 
@@ -48,12 +49,23 @@ def login():
         return jsonify({'error': 'Username and password are required'}), 400
 
     # Find the user in the database
-    user = users_collection.find_one({'username': data['username']})
+    user = USER_COLLECTION.find_one({'username': data['username']})
     if user and check_password_hash(user['password'], data['password']):
         return jsonify({'message': 'Login successful'}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/api/get-latest-seed', methods=['GET'])
+def get_latest_seed():
+    if SEEDS_COLLECTION.count_documents({}) > 0:
+        latest_entry = SEEDS_COLLECTION.find_one(sort=[("_id", -1)])
+        latest_entry['_id'] = str(latest_entry['_id'])
+        return jsonify(latest_entry), 200
+
+    else:
+        return jsonify({'error': 'No seeds in the DB'}), 401
+
+
+def run_flask():
+    app.run(debug=False)
