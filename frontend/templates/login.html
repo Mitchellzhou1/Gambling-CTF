@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Login CSS*/
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            border-radius: 10px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container input[type="submit"] {
+            padding: 10px;
+            background-color: #007BFF;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .login-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .login-container label {
+            margin-bottom: 5px;
+        }
+
+        /* Registration CSS*/
+        .register-container {
+        margin-top: 10px; 
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .register-btn {
+        width: 480px; 
+        height: 64px;
+        margin: 0 auto; /* Center the button */
+        display: block; /* Display block to fill the container */
+        background-color: #ffffff; /* White background */
+        color: black; /* Black text */
+        border: 1px solid #ccc; /* Light border, as in the login container */
+        padding: 10px 40px; /* Vertical padding same as the input fields, horizontal padding half of the .login-container */
+        border-radius: 5px; /* Assuming the .login-container also has a border-radius of 5px */
+        cursor: pointer;
+        transition: background-color 0.3s; /* Smooth transition for hover effect */
+        font-size: 16px;
+        text-decoration: none;
+        }
+        .register-btn:hover {
+            background-color: #8e8e8e; /* Slightly darker shade of white for hover effect */
+        }
+
+        .error {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        }
+
+        #error-message {
+        color: red; /* Text color */
+        background-color: #ffdddd; /* Light red background */
+        border: 1px solid red; /* Red border */
+        padding: 10px; /* Some padding */
+        margin-top: 10px; /* Space above the box */
+        border-radius: 5px; /* Rounded corners */
+        display: none; /* Hide by default */
+        text-align: center; /* Center the text */
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Account Login</h2>
+        <form id="loginForm" method="post">
+            <input type="text" id="usr" name="username" placeholder="Username" required>
+            <input type="password" id="pwd" name="password" placeholder="Password" required>
+            <input type="submit" value="SIGN IN">
+            <div id="error-message" style="color: red;"></div>
+        </form>
+    </div>
+
+    <div class="register-container">
+        <button onclick="window.location.href='/register';" class="register-btn">CREATE AN ACCOUNT</button>
+    </div>
+    
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const usr = document.getElementById('usr').value;
+            const pwd = document.getElementById('pwd').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    usr: document.getElementById("usr").value,
+                    pwd: document.getElementById("pwd").value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else if (data.error) {
+                    // Display the error message and error box
+                    document.getElementById('error-message').textContent = data.error;
+                    document.getElementById('error-message').style.display = 'block'; 
+                    
+                    if (data.success === false) {
+                        // Clear the username and password fields
+                        document.getElementById('usr').value = '';
+                        document.getElementById('pwd').value = '';
+                    } 
+                    
+                } else {
+                    // Hide the error box if no error
+                    document.getElementById('error-message').style.display = 'none'; 
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
