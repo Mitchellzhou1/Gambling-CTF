@@ -10,6 +10,8 @@ DB = CLIENT['roulette']
 USER_COLLECTION = DB['users']
 SEEDS_COLLECTION = DB['seeds']
 
+
+# Register route
 @app.route('/api/register', methods=['POST'])
 def register_user():
     data = request.get_json()
@@ -39,6 +41,7 @@ def register_user():
     return jsonify({'message': 'User added successfully'}), 201
 
 
+# Login route
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -55,12 +58,41 @@ def login():
         return jsonify({'error': 'Invalid username or password'}), 401
 
 
+# Route to fetch the latest seed
 @app.route('/api/get-latest-seed', methods=['GET'])
 def get_latest_seed():
+    # Check if there are any documents in the collection
     if SEEDS_COLLECTION.count_documents({}) > 0:
+
+        # Fetch the latest seed
         latest_entry = SEEDS_COLLECTION.find_one(sort=[("_id", -1)])
+
+        # convert to str to jsonify
         latest_entry['_id'] = str(latest_entry['_id'])
         return jsonify(latest_entry), 200
+
+    else:
+        return jsonify({'error': 'No seeds in the DB'}), 401
+
+
+# Route to fetch latest 100 seeds for provability page
+@app.route('/api/get-seeds', methods=['GET'])
+def get_seeds():
+    # Check if there are any documents in the collection
+    if SEEDS_COLLECTION.count_documents({}) > 0:
+
+        # Fetch the latest seed
+        latest_entries = SEEDS_COLLECTION.find().sort("_id", 1).limit(100)
+
+        latest_entries_list = []
+
+        for entry in latest_entries:
+            # convert to str to jsonify
+            entry['_id'] = str(entry['_id'])
+            latest_entries_list.append(entry)
+
+        return jsonify({"latest_entries": latest_entries_list}), 200
+
     else:
         return jsonify({'error': 'No seeds in the DB'}), 401
 
