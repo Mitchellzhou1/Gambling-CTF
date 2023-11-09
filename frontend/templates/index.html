@@ -9,8 +9,8 @@
       body {
         font-family: Arial, sans-serif;
         text-align: center;
+        background-color: #01431E;
       }
-
       .triangle {
         width: 0;
         height: 0;
@@ -45,7 +45,7 @@
       text-align: center;
       font-size: 1.8vw; /* Font size relative to the viewport width */
     }
-      #token-balance {
+      #tokens {
         text-align: center;
         font-size: 20px;
         margin-top: 30px;
@@ -60,7 +60,8 @@
       #info-button {
         position: absolute;
         right: 10px;
-        padding: 10px 20px;
+        font-size: medium;
+        padding: 20px 20px;
         background-color: #000;
         margin-top: 40px; 
         color: white;
@@ -72,39 +73,55 @@
         position: absolute;
         left: 10px;
         padding: 20px 20px;
-        background-color: gold;
+        background-color: rgb(0, 255, 4);
         font-size: medium;
         margin-top: 40px; 
-        color: black;
+        color: #000;
         border: none;
         border-radius: 10px;
         cursor: pointer;
       }
-      #error {
+      #error-message{
         color: red; /* Text color */
-        background-color: #ffdddd; /* Light red background */
-        border: 1px solid red; /* Red border */
-        padding: 10px; /* Some padding */
         margin-top: 10px; /* Space above the box */
-        border-radius: 5px; /* Rounded corners */
         display: none; /* Hide by default */
         text-align: center; /* Center the text */
+      }      
+      #flag-offer {
+        position: absolute;
+        top: 46%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        border-radius: 10px;
+        z-index: 10; /* Ensure it sits above the roulette wheel */
+      }
+      #bet-form {
+        color: #fff;
+      }
+      #token-balance{
+        color: #fff;
       }
     </style>
   </head>
   <body>
-    <button id="info-button" onclick="window.location.href='/info';">INFO</button>
-    <button id="buy-flag-button" onclick="window.location.href='/info';">BUY FLAG</button>
-    <p id="result">Result: Click to Play!</p>
+    <button id="info-button" onclick="window.location.href='/info';">PROVABLY FAIR</button>
+    <button id="buy-flag-button" onclick="window.location.href='/flag';">BUY FLAG</button>
+    <p id="result">Result: Place Your Bets!</p>
     <div class="roulette-table">
+      <div id="flag-offer">
+        Flag Cost: $1,000,000,000
+        <p>*Wheel spins every 20 seconds*</p>
+      </div>
       <div class="triangle"></div>
       <div class="roulette-wheel" id="wheel">
         <div class="pocket" style="transform: rotate(0deg)"></div>
         <div class="pocket black-pocket" style="transform: rotate(10deg)"></div>
       </div>
 
-      <div id="error" style="color: red;"></div>
-      <div id="token-balance"><b>Tokens:</b> 2000</div>
+      <div id="token-balance" data-tokens="{{ tokens }}"><b>Tokens:</b> {{ tokens }}</div>
 
       <form id="bet-form">
         <input type="number" id="user-input" name="user-bet-amount" placeholder="Bet Amount" required/>
@@ -112,6 +129,7 @@
         <input type="radio" id="black" name="bet" value="black" /> Black
         <input type="radio" id="green" name="bet" value="green" /> Green
         <input type="submit" value="Submit" />
+        <div id="error-message" style="color: red;"></div>
       </form>
     </div>
 
@@ -142,7 +160,7 @@
       }
 
       const resultText = document.getElementById("result");
-      const tokenBalanceElement = document.getElementById("token-balance");
+      const tokenBalanceElement = document.getElementById("tokens");
       const wheel = document.getElementById("wheel");
       const betForm = document.getElementById("bet-form");
       const error = document.getElementById("error");
@@ -159,15 +177,15 @@
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
-            document.getElementById('error').textContent = data.error;
-            document.getElementById('error').style.display = 'block'; 
+            document.getElementById('error-message').textContent = data.error;
+            document.getElementById('error-message').style.display = 'block'; 
           }
           const number = data.number;
           const tokens = data.tokens; // This contains the updated tokens
 
           // Calculate the new rotation degree by adding to the current rotation
           let dst = currentRotation > 360 ? currentRotation % 360 : currentRotation;
-          currentRotation += (360 * 4 + (degs[number] - dst));
+          currentRotation += (360 * 5 + (degs[number] - dst));
 
           // Rotate the wheel for a fixed duration (5 seconds)
           wheel.style.transition = "transform 5s ease-in-out";
@@ -178,7 +196,7 @@
             resultText.textContent = `Result: ${number}`;
             tokenBalanceElement.textContent = `Tokens: ${tokens}`; // Update the tokens display
             wheel.style.pointerEvents = "auto";
-          }, 5500);
+          }, 6000);
         });
     }
 
@@ -187,7 +205,6 @@
 
       // Initial spin to start the automatic spinning
       spinWheel();
-      updateTokenBalance();
     </script>
 
     <script>
@@ -196,14 +213,21 @@
 
         // Get the selected bet option
         const selectedBet = betForm.querySelector('input[name="bet"]:checked');
-        const betAmt = document.getElementById('user-input').value;
+        const tokenBalanceElement = document.getElementById("token-balance");
+        const currentTokens = parseInt(tokenBalanceElement.getAttribute('data-tokens'), 10);
+        const betAmt = parseInt(document.getElementById('user-input').value, 10);
 
         // Check if a bet option is selected
-        if (selectedBet && betAmt) {
-          // Construct the URL for the POST request
+        if (!selectedBet) {
+          document.getElementById('error-message').textContent = "Please select a color";
+          document.getElementById('error-message').style.display = 'block';
+        } else if (betAmt > currentTokens) {
+          // If bet amount is greater than balance, show insufficient funds message
+          document.getElementById('error-message').textContent = "Insufficient Funds";
+          document.getElementById('error-message').style.display = 'block';
+        } else {
+          // If all validations pass, proceed to make the POST request
           const url = `/userInput`;
-
-          // Create a JSON object with the selected bet
           const postData = {
             user_color: selectedBet.value,
             bet_amount: betAmt
@@ -222,16 +246,13 @@
               console.log(data);
               bet_amount: 0;
               user_color: '';
-
             })
             .catch((error) => {
               console.error(error);
             });
-        } else {
-          alert("Please select a color and enter a bet amount.");
+          document.getElementById('error-message').textContent = '';
         }
       });
     </script>
   </body>
-  <p>Wheel spins every 20 seconds</p>
 </html>

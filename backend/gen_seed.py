@@ -19,8 +19,8 @@ PERSISTENT = Random()
 def generate_seed():
 
     while True:
-
-        txt = ""
+                 #### import random
+        txt = ""  ##################
         for i in range(2048 // 32):
             # Generate a random 32-bit number
             random_number = PERSISTENT.getrandbits(32)
@@ -28,13 +28,14 @@ def generate_seed():
             txt += hex(random_number)[2:]
 
         hashed_seed = sha256(txt.encode()).hexdigest()
-        rand_no_from_hash = Random(int(txt, 16)).randrange(38)
+        rand_no_from_hash = Random(int(txt, 16)).randrange(38) ######################
 
         # Create a new seed document
         new_seed_details = {
             'hashed_seed': hashed_seed,
             'number': rand_no_from_hash
         }
+        print(rand_no_from_hash)
 
         # Insert the new seed into the collection
         SEEDS_COLLECTION.insert_one(new_seed_details)
@@ -48,4 +49,4 @@ def generate_seed():
                 SEEDS_COLLECTION.delete_one({"_id": entry["_id"]})
 
         # Sleep for 15sec as a new number is generated every 15 seconds
-        time.sleep(15)
+        time.sleep(8)

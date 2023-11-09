@@ -11,8 +11,9 @@ rouletteVals = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), (
                    ('10', 'black'), ('27', 'red')]
 
 pointer = 0
-tokens = 2000
+tokens = 10000
 userColor = ""
+curr = 0 
 
 def spinner():
     num = str(seed())
@@ -33,8 +34,19 @@ def point_system(color):
         else: tokens -= bet 
         userColor = ''
         bet = 0
-    #print(f"tokens: {tokens}")
 
+        
+@app.route('/info', methods=['GET'])
+def info():
+    # Your logic to fetch and process the seeds data
+    response = requests.get('http://localhost:5000/api/get-seeds')
+    data = json.loads(response.text)
+    latest_entries = data['latest_entries']
+    seed_number_tuples = [(entry['hashed_seed'], entry['number']) for entry in latest_entries]
+
+    # Render 'info.html' and pass the seed_number_tuples data to it
+    return render_template('info.html', seed_data=seed_number_tuples[::-1])
+            
 @app.route('/getSeed', methods=['GET'])
 def seed():
     if request.method == 'GET':
@@ -58,11 +70,14 @@ def userInput():
     # Return the color and bet amount back to the frontend
     return jsonify(color=userColor, bet_amount=bet)
 
+
 @app.route('/spin')
 def spin():
-    global tokens
+    global tokens, curr, bet
     color, num = spinner()
     point_system(color)
+    curr += 1
+    print(num, curr)
     return jsonify(number=str(num), color=color, tokens=tokens)
 
 @app.route('/')
@@ -71,7 +86,7 @@ def index():
         return render_template('index.html', tokens=tokens)
     else: return redirect(url_for('login'))
     
-app.secret_key = "he1231sajiod"
+app.secret_key = "he1231sajiod9832jkfjsd321ADSA2131"
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 9999, debug=True)
