@@ -64,12 +64,14 @@ def userInput():
         bet = int(request.json.get('bet_amount'))
     except ValueError:
         return jsonify({"error": "Please enter a number"}), 500
-
     userColor = request.json.get('user_color')
     
     # Return the color and bet amount back to the frontend
     return jsonify(color=userColor, bet_amount=bet)
 
+@app.route('/flag', methods=['GET'])
+def getFlag():
+    return render_template('flag.html')
 
 @app.route('/spin')
 def spin():
@@ -77,16 +79,15 @@ def spin():
     color, num = spinner()
     point_system(color)
     curr += 1
-    print(num, curr)
     return jsonify(number=str(num), color=color, tokens=tokens)
 
 @app.route('/')
 def index():
-    if 'logged_in' in session and session['logged_in'] and session['user']:
+    if 'logged_in' in session and 'user' in session and session['logged_in'] and session['user']:
         return render_template('index.html', tokens=tokens)
     else: return redirect(url_for('login'))
     
-app.secret_key = "he1231sajiod9832jkfjsd321ADSA2131"
+app.secret_key = "MmQ1YWIyOTU4NDc0Yzk1NDEzY2U1MjRjOTY1NDQzZG"
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 9999, debug=True)

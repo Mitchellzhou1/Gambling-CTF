@@ -35,7 +35,6 @@ def generate_seed():
             'hashed_seed': hashed_seed,
             'number': rand_no_from_hash
         }
-        print(rand_no_from_hash)
 
         # Insert the new seed into the collection
         SEEDS_COLLECTION.insert_one(new_seed_details)

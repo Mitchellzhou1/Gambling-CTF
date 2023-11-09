@@ -72,13 +72,12 @@
                random_number = PERSISTENT.getrandbits(32) 
 
                # Generate a random 32-bit number
-               txt += hex(random_number)[2:] # convert to hash and append
+               txt += hex(random_number)[2:].zfill(8) # convert to hash and append
 
             hashed_seed = sha256(txt.encode()).hexdigest()
             rand_no_from_hash = Random(int(txt, 16)).randrange(38)
         
         </code></pre>
-        <p></p>
         <table class="data-table">
             <thead>
                 <tr>
@@ -98,7 +97,7 @@
             </tbody>
         </table>
     </div>
-    <script>
+    <script>    
         // Function to fetch the latest seed and update the table
         function fetchLatestSeedAndUpdateTable() {
             fetch('http://localhost:5000/api/get-seeds')

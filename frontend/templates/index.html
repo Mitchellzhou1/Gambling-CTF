@@ -38,7 +38,6 @@
         margin: 10px;
       }
       #result {
-      /* Center the result and make it larger */
       color: white;
       background-color: rgba(0, 0, 0, 1); /* Semi-transparent black background for readability */
       border-radius: 10px; /* Rounded corners for the box */
@@ -81,6 +80,11 @@
         border-radius: 10px;
         cursor: pointer;
       }
+      #buy-flag-button:disabled {
+        background-color: #666666; 
+        color: #000; 
+        cursor: not-allowed; 
+    }
       #error-message{
         color: red; /* Text color */
         margin-top: 10px; /* Space above the box */
@@ -98,17 +102,14 @@
         border-radius: 10px;
         z-index: 10; /* Ensure it sits above the roulette wheel */
       }
-      #bet-form {
-        color: #fff;
-      }
-      #token-balance{
+      #bet-form, #token-balance {
         color: #fff;
       }
     </style>
   </head>
   <body>
     <button id="info-button" onclick="window.location.href='/info';">PROVABLY FAIR</button>
-    <button id="buy-flag-button" onclick="window.location.href='/flag';">BUY FLAG</button>
+    <button id="buy-flag-button" onclick="window.location.href='/flag';"disabled>BUY FLAG</button>
     <p id="result">Result: Place Your Bets!</p>
     <div class="roulette-table">
       <div id="flag-offer">
@@ -205,9 +206,7 @@
 
       // Initial spin to start the automatic spinning
       spinWheel();
-    </script>
 
-    <script>
       betForm.addEventListener("submit", function (event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
@@ -253,6 +252,20 @@
           document.getElementById('error-message').textContent = '';
         }
       });
+
+      function buttonStatus() {
+          const tokenBalanceElement = document.getElementById("token-balance");
+          const buyButton = document.getElementById("buy-flag-button");
+
+          if (parseInt(tokenBalanceElement.getAttribute('data-tokens'), 10) >= Math.pow(10,9)) {
+              buyButton.disabled = false;
+          } else {
+              buyButton.disabled = true;
+          }
+      }
+
+      // Call the function on page load and whenever the token balance updates
+      window.onload = buttonStatus;
     </script>
   </body>
 </html>
