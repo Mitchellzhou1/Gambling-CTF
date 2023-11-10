@@ -58,6 +58,23 @@ def login():
         return jsonify({'error': 'Invalid username or password'}), 401
 
 
+# Route to fetch latest tokens
+@app.route('/api/get-tokens', methods=['GET'])
+def get_tokens():
+    data = request.get_json()
+
+    # Ensure required fields are present
+    if 'username' not in data:
+        return jsonify({'error': 'Username, bet and color are required'}), 400
+
+    # Find the user in the database
+    user = USER_COLLECTION.find_one({'username': data['username']})
+    if user:
+        pass
+    else:
+        return jsonify({'error': 'User does not exist'}), 401
+
+
 # Route to fetch the latest seed
 @app.route('/api/get-latest-seed', methods=['GET'])
 def get_latest_seed():
@@ -97,6 +114,7 @@ def get_seeds():
         return jsonify({'error': 'No seeds in the DB'}), 401
 
 
+# Route to place bets
 @app.route('/api/place-bets', methods=['POST'])
 def place_bet():
     global BET_POOL_NO

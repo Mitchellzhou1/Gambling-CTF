@@ -1,4 +1,5 @@
 import time
+import traceback
 
 from random import Random
 from hashlib import sha256
@@ -46,6 +47,7 @@ class GenerateSeed:
 
                 except:
                     print("ERROR: Couldn't update the pool number")
+                    traceback.print_exc()
 
                 print("Process successful! Releasing lock!")
                 self.bet_pool_lock.release()
@@ -57,6 +59,7 @@ class GenerateSeed:
                 # self.bet_pool_event.set()
             except:
                 print("Failed to update the processes with pool change!")
+                traceback.print_exc()
 
             txt = ""
             for i in range(2048 // 32):

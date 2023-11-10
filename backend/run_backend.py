@@ -1,4 +1,5 @@
 import multiprocessing
+import traceback
 
 from multiprocessing import Value
 
@@ -47,9 +48,11 @@ def main():
             gen_seed_process.terminate()
             flask_process.join()
             gen_seed_process.join()
+            traceback.print_exc()
 
     except:
         print("ERROR: Failed to initiate roulette backend processes!")
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
