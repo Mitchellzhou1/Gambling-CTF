@@ -92,7 +92,7 @@
         text-align: center; /* Center the text */
       }      
       #confirm-message{
-        color: green; /* Text color */
+        color: rgb(0, 255, 0); /* Text color */
         margin-top: 10px; /* Space above the box */
         display: none; /* Hide by default */
         text-align: center; /* Center the text */
@@ -135,8 +135,9 @@
         <input type="radio" id="red" name="bet" value="red" /> Red
         <input type="radio" id="black" name="bet" value="black" /> Black
         <input type="radio" id="green" name="bet" value="green" /> Green
-        <input type="submit" value="Place Bet" />
+        <input type="submit" value="Submit" />
         <div id="error-message" style="color: red;"></div>
+        <div id="confirm-message" style="color: rgb(0, 255, 0);"></div>
       </form>
     </div>
 
@@ -241,6 +242,8 @@
           document.getElementById('error-message').style.display = 'block';
         } else {
           // If all validations pass, proceed to make the POST request
+          document.getElementById('confirm-message').textContent = "Bet Placed";
+          document.getElementById('confirm-message').style.display = 'block';
           const url = `/userInput`;
           const postData = {
             user_color: selectedBet.value,
