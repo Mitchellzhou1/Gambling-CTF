@@ -15,7 +15,7 @@ def login():
         return render_template('login.html')
     else:
         if request.method == "POST":
-            user = request.json.get('usr')
+           y user = request.json.get('usr')
             pwd = request.json.get('pwd')
             backend_url = 'http://localhost:5000/api/login'
             response = requests.post(backend_url, json={'username': user, 'password': pwd})

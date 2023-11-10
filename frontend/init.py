@@ -10,17 +10,9 @@ rouletteVals = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), (
                    ('31', 'black'), ('19', 'red'), ('8', 'black'), ('12', 'red'), ('29', 'black'), ('35', 'red'), 
                    ('10', 'black'), ('27', 'red')]
 
-pointer = 0
+bet = 0
 userColor = ""
-tokens = 2000
-
-@app.route('/place-bet',methods=['POST'])
-def placeBet():
-    global tokens
-    response = requests.post('http://localhost:5000/api/bet', json={'username': session['user']})
-    if response.ok:     
-        tokens = json.loads(response.text)
-        print(tokens)
+tokens = 0
 
 def spinner():
     num = str(seed())
@@ -32,16 +24,26 @@ def spinner():
             break
     return color, num
 
-def point_system(color):
-    global userColor, tokens, bet
-    if userColor:
-        if userColor == color:
-            if color == 'green': tokens = bet * 10
-            else: tokens = bet * 2
-        else: tokens -= bet 
-        userColor = ''
-        bet = 0
+@app.route('/place-bet',methods=['POST'])
+def place_bet():
+    global userColor, bet
+    if request.method == 'POST':
+        api = 'http://localhost:5000/api/place-bet'
+        response = requests.post(api, json={'username': session['user'], 'color': userColor, 'bet':bet})
 
+        if response.ok:     
+            userColor = ''
+            bet = 0
+
+@app.route('/get-token',methods=['GET'])
+def getBalance():
+    if request.method == 'GET':
+        api = 'http://localhost:5000/api/get-token'
+        response = requests.get(api, json={'username': session['user']})
+
+        if response.ok:
+            tokens = json.load(response.text)['tokens']
+            return tokens
         
 @app.route('/info', methods=['GET'])
 def info():
@@ -85,7 +87,8 @@ def getFlag():
 def spin():
     global tokens, bet
     color, num = spinner()
-    point_system(color)
+    tokens = getBalance()
+    place_bet()
     return jsonify(number=str(num), color=color, tokens=tokens)
 
 @app.route('/')
