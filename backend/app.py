@@ -10,7 +10,6 @@ DB = CLIENT['roulette']
 USER_COLLECTION = DB['users']
 SEEDS_COLLECTION = DB['seeds']
 
-
 # Register route
 @app.route('/api/register', methods=['POST'])
 def register_user():
@@ -73,7 +72,7 @@ def get_latest_seed():
 
     else:
         return jsonify({'error': 'No seeds in the DB'}), 401
-
+    
 
 # Route to fetch latest 100 seeds for provability page
 @app.route('/api/get-seeds', methods=['GET'])
@@ -82,7 +81,7 @@ def get_seeds():
     if SEEDS_COLLECTION.count_documents({}) > 0:
 
         # Fetch the latest seed
-        latest_entries = SEEDS_COLLECTION.find().sort("_id", 1).limit(100)
+        latest_entries = SEEDS_COLLECTION.find().sort("_id", -1).limit(100)
 
         latest_entries_list = []
 
@@ -91,7 +90,7 @@ def get_seeds():
             entry['_id'] = str(entry['_id'])
             latest_entries_list.append(entry)
 
-        return jsonify({"latest_entries": latest_entries_list}), 200
+        return jsonify({"latest_entries": latest_entries_list[::-1]}), 200
 
     else:
         return jsonify({'error': 'No seeds in the DB'}), 401

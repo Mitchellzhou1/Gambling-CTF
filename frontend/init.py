@@ -11,9 +11,16 @@ rouletteVals = [('00', 'green'), ('1', 'red'), ('13', 'black'), ('36', 'red'), (
                    ('10', 'black'), ('27', 'red')]
 
 pointer = 0
-tokens = 10000
 userColor = ""
-curr = 0 
+tokens = 2000
+
+@app.route('/place-bet',methods=['POST'])
+def placeBet():
+    global tokens
+    response = requests.post('http://localhost:5000/api/bet', json={'username': session['user']})
+    if response.ok:     
+        tokens = json.loads(response.text)
+        print(tokens)
 
 def spinner():
     num = str(seed())
@@ -43,6 +50,7 @@ def info():
     data = json.loads(response.text)
     latest_entries = data['latest_entries']
     seed_number_tuples = [(entry['hashed_seed'], entry['number']) for entry in latest_entries]
+    data = ""
 
     # Render 'info.html' and pass the seed_number_tuples data to it
     return render_template('info.html', seed_data=seed_number_tuples[::-1])
@@ -75,10 +83,9 @@ def getFlag():
 
 @app.route('/spin')
 def spin():
-    global tokens, curr, bet
+    global tokens, bet
     color, num = spinner()
     point_system(color)
-    curr += 1
     return jsonify(number=str(num), color=color, tokens=tokens)
 
 @app.route('/')

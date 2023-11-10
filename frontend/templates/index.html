@@ -91,6 +91,12 @@
         display: none; /* Hide by default */
         text-align: center; /* Center the text */
       }      
+      #confirm-message{
+        color: green; /* Text color */
+        margin-top: 10px; /* Space above the box */
+        display: none; /* Hide by default */
+        text-align: center; /* Center the text */
+      }  
       #flag-offer {
         position: absolute;
         top: 46%;
@@ -122,36 +128,35 @@
         <div class="pocket black-pocket" style="transform: rotate(10deg)"></div>
       </div>
 
-      <div id="token-balance" data-tokens="{{ tokens }}"><b>Tokens:</b> {{ tokens }}</div>
+      <div id="token-balance" data-tokens="{{ tokens }}"><b>Balance ($):</b> {{ tokens }}</div>
 
       <form id="bet-form">
         <input type="number" id="user-input" name="user-bet-amount" placeholder="Bet Amount" required/>
         <input type="radio" id="red" name="bet" value="red" /> Red
         <input type="radio" id="black" name="bet" value="black" /> Black
         <input type="radio" id="green" name="bet" value="green" /> Green
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Place Bet" />
         <div id="error-message" style="color: red;"></div>
       </form>
     </div>
 
     <script>
-
       function getRandom(min, max) { 
           return Math.floor(Math.random() * (max - min + 1)) + min; 
       }
 
       // Hashmap of each number on the wheel and their ranges
       const ranges = {
-          "1": [6, 13], "13": [15, 23], "36": [25, 32], "24": [34, 42],
-          "3": [44, 51], "15": [53, 60], "34": [62, 70], "22": [72, 79],
-          "5": [81, 89], "17": [91, 99], "32": [101, 108], "20": [110, 118],
-          "7": [119, 127], "11": [129, 137], "30": [139, 146], "26": [148, 155],
-          "9": [157, 165], "28": [167, 174], "0": [176, 184], "2": [186, 193],
-          "14": [195, 203], "35": [205, 212], "23": [214, 221], "4": [224, 231],
-          "16": [233, 241], "33": [243, 250], "21": [251, 260], "6": [263, 269],
-          "18": [271, 279], "31": [281, 288], "19": [290, 298], "8": [300, 307],
-          "12": [309, 316], "29": [318, 326], "35": [328, 335], "10": [337, 345],
-          "27": [347, 354], "00": [360, 360]
+          "1": [7, 12], "13": [16, 21], "36": [26, 31], "24": [35, 40],
+          "3": [45, 50], "15": [54, 59], "34": [63, 69], "22": [73, 78],
+          "5": [82, 87], "17": [92, 97], "32": [102, 107], "20": [111, 117],
+          "7": [120, 125], "11": [130, 135], "30": [140, 145], "26": [149, 154],
+          "9": [158, 163], "28": [168, 173], "0": [177, 182], "2": [187, 192],
+          "14": [196, 201], "35": [206, 211], "23": [215, 220], "4" : [225, 230],
+          "16": [234, 239], "33": [244, 249], "21": [252, 257], "6": [264, 268],
+          "18": [272, 277], "31": [282, 287], "19": [291, 296], "8": [301, 306],
+          "12": [310, 315], "29": [319, 324], "35": [329, 334], "10": [338, 344],
+          "27": [348, 353], "00": [359, 360]
       };
 
       let degs = {};
@@ -184,6 +189,11 @@
           const number = data.number;
           const tokens = data.tokens; // This contains the updated tokens
 
+          document.getElementById('user-input').disabled = true;
+          document.getElementById('red').disabled = true;
+          document.getElementById('black').disabled = true;
+          document.getElementById('green').disabled = true;
+
           // Calculate the new rotation degree by adding to the current rotation
           let dst = currentRotation > 360 ? currentRotation % 360 : currentRotation;
           currentRotation += (360 * 5 + (degs[number] - dst));
@@ -192,12 +202,17 @@
           wheel.style.transition = "transform 5s ease-in-out";
           wheel.style.transform = `rotate(${currentRotation}deg)`;  
 
+
           // After a delay, show the result and re-enable user interaction
           setTimeout(() => {
             resultText.textContent = `Result: ${number}`;
+            document.getElementById('user-input').disabled = false;
+            document.getElementById('red').disabled = false;
+            document.getElementById('black').disabled = false;
+            document.getElementById('green').disabled = false;
             tokenBalanceElement.textContent = `Tokens: ${tokens}`; // Update the tokens display
             wheel.style.pointerEvents = "auto";
-          }, 6000);
+          }, 5500);
         });
     }
 
