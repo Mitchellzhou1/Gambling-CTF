@@ -9,6 +9,7 @@ CLIENT = MongoClient('mongodb://localhost:27017/')
 DB = CLIENT['roulette']
 USER_COLLECTION = DB['users']
 SEEDS_COLLECTION = DB['seeds']
+BET_POOL_NO = 0
 
 # Register route
 @app.route('/api/register', methods=['POST'])
@@ -31,7 +32,7 @@ def register_user():
     new_user = {
         'username': data['username'],
         'password': hashed_password,
-        'balance': 2000
+        'tokens': 2000
     }
 
     # Insert the new user into the collection
@@ -52,7 +53,7 @@ def login():
     # Find the user in the database
     user = USER_COLLECTION.find_one({'username': data['username']})
     if user and check_password_hash(user['password'], data['password']):
-        return jsonify({'message': 'Login successful'}), 200
+        return jsonify({'message': 'Login successful', 'tokens': 2000}), 200
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
@@ -96,5 +97,41 @@ def get_seeds():
         return jsonify({'error': 'No seeds in the DB'}), 401
 
 
-def run_flask():
+@app.route('/api/place-bets', methods=['POST'])
+def place_bet():
+    global BET_POOL_NO
+
+    data = request.get_json()
+
+    # Ensure required fields are present
+    if 'username' not in data or 'bet' not in data or 'color' not in data:
+        return jsonify({'error': 'Username, bet and color are required'}), 400
+
+    # Find the user in the database
+    user = USER_COLLECTION.find_one({'username': data['username']})
+    if user:
+        print(f'{BET_POOL_NO.value}')
+        pool_collection = DB[f"POOL{BET_POOL_NO.value}"]
+
+        user_in_pool = pool_collection.find_one({'username': data['username']}) == data['username']
+        if user_in_pool:
+            return jsonify({'error': 'User cannot place the bet twice'}), 401
+
+        # Create a new bet document
+        new_bet = {
+            'username': data['username'],
+            'color': data['color'],
+            'bet': data['bet']
+        }
+
+        # Insert the new bet into the pool
+        pool_collection.insert_one(new_bet)
+        return jsonify({'message': 'Successfully placed the bet'}), 200
+    else:
+        return jsonify({'error': 'User does not exist'}), 401
+
+
+def run_flask(pool_number):
+    global BET_POOL_NO
+    BET_POOL_NO = pool_number
     app.run(debug=False)
