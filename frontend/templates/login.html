@@ -5,25 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <style>
-            .error {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100px;
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
+
+        /* Login CSS*/
         .login-container {
             background-color: #ffffff;
             padding: 40px;
@@ -60,6 +52,43 @@
         .login-container label {
             margin-bottom: 5px;
         }
+
+        /* Registration CSS*/
+        .register-container {
+        margin-top: 10px; 
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .register-btn {
+        width: 480px; 
+        height: 64px;
+        margin: 0 auto; /* Center the button */
+        display: block; /* Display block to fill the container */
+        background-color: #ffffff; /* White background */
+        color: black; /* Black text */
+        border: 1px solid #ccc; /* Light border, as in the login container */
+        padding: 10px 40px; /* Vertical padding same as the input fields, horizontal padding half of the .login-container */
+        border-radius: 5px; /* Assuming the .login-container also has a border-radius of 5px */
+        cursor: pointer;
+        transition: background-color 0.3s; /* Smooth transition for hover effect */
+        font-size: 16px;
+        text-decoration: none;
+        }
+        .register-btn:hover {
+            background-color: #8e8e8e; /* Slightly darker shade of white for hover effect */
+        }
+
+        .error {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        }
+
         #error-message {
         color: red; /* Text color */
         background-color: #ffdddd; /* Light red background */
@@ -70,20 +99,23 @@
         display: none; /* Hide by default */
         text-align: center; /* Center the text */
         }
+
     </style>
 </head>
 
 <body>
     <div class="login-container">
-        <h2>SIGN IN</h2>
+        <h2>Account Login</h2>
         <form id="loginForm" method="post">
-            <label for="usr">Username</label>
-            <input type="text" id="usr" name="username" required>
-            <label for="pwd">Password</label>
-            <input type="password" id="pwd" name="password" required>
-            <input type="submit" value="Login">
+            <input type="text" id="usr" name="username" placeholder="Username" required>
+            <input type="password" id="pwd" name="password" placeholder="Password" required>
+            <input type="submit" value="SIGN IN">
             <div id="error-message" style="color: red;"></div>
         </form>
+    </div>
+
+    <div class="register-container">
+        <button onclick="window.location.href='/register';" class="register-btn">CREATE AN ACCOUNT</button>
     </div>
     
 
@@ -96,9 +128,7 @@
 
             fetch('/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     usr: document.getElementById("usr").value,
                     pwd: document.getElementById("pwd").value
@@ -126,7 +156,7 @@
             });
         });
     </script>
-    
+
 </body>
 </html>
 

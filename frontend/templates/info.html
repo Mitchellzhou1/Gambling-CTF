@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+
+        /* Style the "String" column to make it larger */
+        .data-table th:nth-child(1),
+        .data-table td:nth-child(1) {
+            font-size: 18px;
+        }
+        #game-button {
+        position: absolute;
+        right: 10px;
+        font-size: medium;
+        padding: 20px 20px;
+        background-color: #000;
+        margin-top: 10px; 
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .data-table tr:nth-child(1) {
+        color: red; /* Set font color to red for the first column */
+    }
+    </style>
+</head>
+<body>
+    <button id="game-button" onclick="window.location.href='/';">GAME</button>
+    <div class="container">
+        <h1>Seed Generation</h1>
+        <pre><code>
+           import random
+
+           txt = ""
+           for i in range(2048 // 32):
+               # Generate a random 32-bit number
+               random_number = PERSISTENT.getrandbits(32) 
+
+               # Generate a random 32-bit number
+               txt += hex(random_number)[2:].zfill(8) # convert to hash and append
+
+            hashed_seed = sha256(txt.encode()).hexdigest()
+            rand_no_from_hash = Random(int(txt, 16)).randrange(38)
+        
+        </code></pre>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Hashed Seed (most recent first)</th>
+                    <th>Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data from your Flask server will go here -->
+                {% for seed, num in seed_data %}
+                <tr>
+                    <td>{{seed}}</td>
+                    <td>{{num}}</td>
+                </tr>
+                {% endfor %}
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+    <script>    
+        // Function to fetch the latest seed and update the table
+        function fetchLatestSeedAndUpdateTable() {
+            fetch('http://localhost:5000/api/get-seeds')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.latest_entries) {
+                        const tableBody = document.getElementById('data-body');
+                        // Clear existing data
+                        tableBody.innerHTML = '';
+
+                        // Iterate over the latest entries and add them to the table
+                        data.latest_entries.forEach(entry => {
+                            const newRow = document.createElement('tr');
+                            newRow.innerHTML = `<td>${entry.hashed_seed}</td><td>${entry.date_time}</td>`;
+                            tableBody.appendChild(newRow);
+                        });
+                    } else {
+                        console.error('No seeds data available:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching latest seeds:', error);
+                });
+        }
+        // Call the function to fetch and update on page load
+        window.onload = fetchLatestSeedAndUpdateTable;
+
+    </script>
+
+</body>
+</html>
