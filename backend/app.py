@@ -59,7 +59,7 @@ def login():
 
 
 # Route to fetch latest tokens
-@app.route('/api/get-tokens', methods=['GET'])
+@app.route('/api/get-tokens', methods=['POST'])
 def get_tokens():
     data = request.get_json()
 
@@ -70,7 +70,7 @@ def get_tokens():
     # Find the user in the database
     user = USER_COLLECTION.find_one({'username': data['username']})
     if user:
-        pass
+        return jsonify({'username': data['username'], 'tokens': user['tokens']})
     else:
         return jsonify({'error': 'User does not exist'}), 401
 
